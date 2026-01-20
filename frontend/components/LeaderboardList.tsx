@@ -6,30 +6,40 @@ import { LeaderboardItem } from './LeaderboardItem';
 import { User } from '../services/types';
 import { theme } from '../constants/theme';
 
-export function LeaderboardList() {
+interface Props {
+  searchResults?: User[]; // Optional search results
+  isSearching?: boolean;  // Are we in search mode?
+  isLoadingSearch?: boolean; // Is the search query loading?
+}
+
+export function LeaderboardList({ searchResults, isSearching, isLoadingSearch }: Props) {
   const {
     data,
-    isLoading,
+    isLoading: isLoadingLeaderboard,
     isError,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
   } = useLeaderboard();
 
-  const users = data?.pages.flatMap((page) => page.users) ?? [];
+  // Use search results if searching, otherwise use leaderboard data
+  const users = isSearching
+    ? (searchResults ?? [])
+    : (data?.pages.flatMap((page) => page.users) ?? []);
 
   const renderItem = useCallback(
-    ({ item }: { item: User }) => <LeaderboardItem user={item} />,
-    []
+    ({ item }: { item: User }) => <LeaderboardItem user={item} isHighlight={isSearching} />,
+    [isSearching]
   );
 
   const handleEndReached = () => {
-    if (hasNextPage) {
+    if (!isSearching && hasNextPage) {
       fetchNextPage();
     }
   };
 
-  if (isLoading) {
+  // Show loader while search is fetching
+  if (isSearching && isLoadingSearch) {
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -37,10 +47,26 @@ export function LeaderboardList() {
     );
   }
 
-  if (isError) {
+  if (isLoadingLeaderboard && !isSearching) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    );
+  }
+
+  if (isError && !isSearching) {
     return (
       <View style={styles.center}>
         <Text style={styles.errorText}>Failed to load leaderboard</Text>
+      </View>
+    );
+  }
+
+  if (isSearching && users.length === 0) {
+    return (
+      <View style={styles.center}>
+        <Text style={styles.emptyText}>No users found</Text>
       </View>
     );
   }
@@ -56,7 +82,7 @@ export function LeaderboardList() {
         onEndReachedThreshold={0.5}
         contentContainerStyle={styles.listContent}
         ListFooterComponent={
-          isFetchingNextPage ? (
+          isFetchingNextPage && !isSearching ? (
             <ActivityIndicator style={{ margin: 20 }} color={theme.colors.primary} />
           ) : <View style={{ height: 20 }} />
         }
@@ -80,6 +106,11 @@ const styles = StyleSheet.create({
     color: theme.colors.error,
     fontSize: 16,
     fontWeight: '600',
+  },
+  emptyText: {
+    color: theme.colors.textSecondary,
+    fontSize: 16,
+    fontStyle: 'italic',
   },
   listContent: {
     paddingTop: theme.spacing.s,

@@ -1,22 +1,26 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, StatusBar } from 'react-native';
 import { LeaderboardList } from '../components/LeaderboardList';
 import { SearchBar } from '../components/SearchBar';
-import { leaderboardApi } from '../services/api';
+import { useUserSearch } from '../hooks/useLeaderboard';
+import { theme } from '../constants/theme';
 
 export default function LeaderboardScreen() {
-  // Optional: Auto-seed if empty on mount (for demo purposes)
-  // In a real app, this would be admin controlled
-  useEffect(() => {
-    // Check stats and seed if empty?
-    // For now we assume backend is running and seeded.
-  }, []);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Fetch search results only if query is long enough
+  const isSearching = searchQuery.length >= 2;
+  const { data: searchResults, isLoading: isSearchLoading } = useUserSearch(isSearching ? searchQuery : '');
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
-      <SearchBar />
-      <LeaderboardList />
+      <SearchBar onSearch={setSearchQuery} />
+      <LeaderboardList
+        searchResults={searchResults}
+        isSearching={isSearching}
+        isLoadingSearch={isSearchLoading}
+      />
     </View>
   );
 }
@@ -24,6 +28,6 @@ export default function LeaderboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: theme.colors.background,
   },
 });

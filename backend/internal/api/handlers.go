@@ -152,7 +152,7 @@ func (h *Handler) Search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	limit := 20
+	limit := 100 // Increased limit for better UX
 	results := h.lb.SearchUsers(query, limit)
 
 	// Convert to response format
