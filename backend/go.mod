@@ -1,6 +1,6 @@
 module goleaderboard
 
-go 1.25.4
+go 1.22
 
 require (
 	github.com/brianvoe/gofakeit/v6 v6.28.0
