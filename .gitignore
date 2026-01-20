@@ -1,2 +1,5 @@
 */node_modules/*
 frontend/.expo/*
+# Local Netlify folder
+.netlify
+frontend/dist/*
