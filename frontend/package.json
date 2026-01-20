@@ -1,0 +1,35 @@
+{
+  "name": "scalable-leaderboard",
+  "version": "1.0.0",
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "@shopify/flash-list": "2.0.2",
+    "@tanstack/react-query": "^5.28.4",
+    "axios": "^1.6.8",
+    "expo": "^54.0.0",
+    "expo-constants": "latest",
+    "expo-linking": "latest",
+    "expo-router": "latest",
+    "expo-status-bar": "latest",
+    "expo-system-ui": "latest",
+    "expo-web-browser": "latest",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-safe-area-context": "latest",
+    "react-native-screens": "~4.16.0",
+    "react-native-web": "latest"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0",
+    "@types/react": "latest",
+    "typescript": "^5.3.0"
+  },
+  "private": true
+}
